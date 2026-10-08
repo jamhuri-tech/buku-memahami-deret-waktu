@@ -957,6 +957,67 @@ def bab10_residu():
     simpan(fig, "bab10-residu")
 
 
+# ============================ Bab 11 =================================
+
+def bab11_acf():
+    from statsmodels.tsa.arima_process import ArmaProcess
+    ma = np.convolve([1, -0.4], np.r_[1, np.zeros(11), -0.6])
+    p = ArmaProcess([1], ma)
+    fig, ax = plt.subplots(1, 2, figsize=(4.7, 1.9), sharey=True)
+    _stem(ax[0], np.r_[np.nan, p.acf(31)[1:]])
+    _stem(ax[1], np.r_[np.nan, p.pacf(31)[1:]], warna=HIJAU)
+    ax[0].set_title("ACF")
+    ax[1].set_title("PACF")
+    for a in ax:
+        a.set_xticks([1, 12, 24, 30])
+        a.set_xlabel("lag $h$")
+        _rapikan(a)
+    fig.tight_layout()
+    simpan(fig, "bab11-acf")
+
+
+def bab11_airline():
+    import warnings
+    from statsmodels.tsa.statespace.sarimax import SARIMAX
+    from bab11_simulasi import deret_airline
+    warnings.filterwarnings("ignore")
+    y = deret_airline(144, -0.4, -0.6)
+    fit = SARIMAX(y, order=(0, 1, 1),
+                  seasonal_order=(0, 1, 1, 12)).fit(disp=False)
+    f = fit.get_forecast(24)
+    lo, hi = f.conf_int().T
+    t = np.arange(1, 145)
+    tf = np.arange(145, 169)
+    fig, ax = plt.subplots(figsize=(4.7, 2.0))
+    ax.plot(t[72:], y[72:], color=BIRU, lw=0.8)
+    ax.fill_between(tf, lo, hi, color=HIJAU_MUDA, lw=0)
+    ax.plot(tf, f.predicted_mean, color=HIJAU, lw=0.9)
+    ax.set_xlabel("bulan $t$")
+    ax.set_ylabel("$y_t$")
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab11-airline")
+
+
+def bab11_musiman():
+    from bab01_data import deret_musiman
+    y = deret_musiman()
+    t = np.arange(1, 13)
+    tf = np.arange(13, 17)
+    fig, ax = plt.subplots(figsize=(4.4, 1.9))
+    ax.plot(t, y, color=BIRU, lw=0.9, marker="o", ms=3, label="data")
+    ax.plot(tf, y[8:] + 4, color=HIJAU, lw=0.9, marker="s", ms=3,
+            label=r"SARIMA $(0,0,0)(0,1,0)_4$ + drift")
+    ax.plot(tf, 1 + tf + np.array([0, 4, 7, 1]), color=JINGGA, lw=0.9,
+            marker="^", ms=3, ls="--", label="regresi tren + dummy")
+    ax.set_xticks(np.arange(1, 17))
+    ax.set_xlabel("kuartal $t$")
+    ax.legend(fontsize=5.5, loc="upper left")
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab11-musiman")
+
+
 # Fungsi gambar baru disisipkan DI ATAS penanda ini.
 
 
