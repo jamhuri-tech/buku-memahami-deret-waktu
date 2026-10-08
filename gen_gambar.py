@@ -798,6 +798,86 @@ def bab08_palsu():
     simpan(fig, "bab08-palsu")
 
 
+# ============================ Bab 9 ==================================
+
+def bab09_kipas():
+    from bab01_data import deret_mini, ramal
+    from bab09_ramalan import galat_baku_ramalan
+    y = deret_mini()
+    H = 10
+    f = ramal(y, np.array([4, 0.5, -0.5]), H)
+    se = galat_baku_ramalan([0.5, -0.5], [], 1.0, H)
+    tt = np.arange(9, 9 + H)
+    fig, ax = plt.subplots(figsize=(4.7, 2.1))
+    ax.fill_between(np.r_[8, tt], np.r_[3, f - 1.96 * se],
+                    np.r_[3, f + 1.96 * se], color=HIJAU_MUDA, lw=0,
+                    label="selang 95%")
+    ax.fill_between(np.r_[8, tt], np.r_[3, f - 1.2816 * se],
+                    np.r_[3, f + 1.2816 * se], color="#BFDCD3", lw=0,
+                    label="selang 80%")
+    ax.plot(np.arange(1, 9), y, color=BIRU, lw=1.0, marker="o", ms=3)
+    ax.plot(np.r_[8, tt], np.r_[3, f], color=HIJAU, lw=1.0, marker="s",
+            ms=2.5, label="ramalan")
+    ax.axhline(4, color=ABU_GARIS, lw=0.6, ls="--")
+    ax.set_xticks(np.arange(1, 19))
+    ax.set_xlabel("pekan $t$")
+    ax.set_ylabel("$y_t$")
+    ax.legend(fontsize=5.5, loc="upper left", ncol=3)
+    ax.set_ylim(0, 8.5)
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab09-kipas")
+
+
+def bab09_lebar():
+    from bab09_ramalan import galat_baku_ramalan
+    H = 20
+    h = np.arange(1, H + 1)
+    fig, ax = plt.subplots(figsize=(4.4, 2.0))
+    ax.plot(h, galat_baku_ramalan([0.5, -0.5], [], 1.0, H), color=BIRU,
+            marker="o", ms=2.5, lw=0.9, label="AR(2) data mini")
+    ax.plot(h, galat_baku_ramalan([1.0], [], 1.0, H), color=MERAH,
+            marker="s", ms=2.5, lw=0.9, label=r"random walk, $\sqrt{h}$")
+    ax.axhline(np.sqrt(1.5), color=BIRU, lw=0.6, ls="--")
+    ax.text(20, np.sqrt(1.5) - 0.35, r"$\sqrt{\gamma(0)} = 1{,}22$",
+            fontsize=6, color=BIRU, ha="right")
+    ax.set_xlabel("horizon $h$")
+    ax.set_ylabel("galat baku ramalan")
+    ax.legend(fontsize=6)
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab09-lebar")
+
+
+def bab09_cakupan():
+    import subprocess
+    keluaran = subprocess.run([sys.executable, "kode/bab09_simulasi.py"],
+                              capture_output=True, text=True).stdout
+    baris = [b for b in keluaran.splitlines() if "parameter" in b]
+    nilai = [[float(v) for v in b.split(":")[1].split()] for b in baris]
+    H = [1, 2, 5, 10]
+    x = np.arange(len(H))
+    fig, ax = plt.subplots(figsize=(4.4, 2.0))
+    lebar = 0.2
+    warna = [BIRU, JINGGA, HIJAU, MERAH]
+    nama = ["$T = 30$, benar", "$T = 30$, taksir", "$T = 200$, benar",
+            "$T = 200$, taksir"]
+    for k in range(4):
+        ax.bar(x + (k - 1.5) * lebar, nilai[k], width=lebar,
+               color=warna[k], label=nama[k])
+    ax.axhline(0.95, color=ABU, lw=0.7, ls="--")
+    ax.set_ylim(0.88, 0.97)
+    ax.set_xticks(x)
+    ax.set_xticklabels([f"$h = {h}$" for h in H])
+    kunci_label(ax, "x")
+    ax.set_ylabel("cakupan")
+    ax.legend(fontsize=5, ncol=4, loc="lower center",
+              bbox_to_anchor=(0.5, 1.0))
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab09-cakupan")
+
+
 # Fungsi gambar baru disisipkan DI ATAS penanda ini.
 
 
