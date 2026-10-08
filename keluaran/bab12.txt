@@ -1,0 +1,18 @@
+# Blok keluaran yang tercetak di Bab 12 (bab12-smoothing.tex).
+# Diperiksa oleh periksa.py terhadap kode/bab12_*.py.
+
+=== blok 1 ===
+(1) SES data mini, alpha = 0.5, l_0 = 2:
+    l_t   : 2.0000 3.5000 4.7500 4.8750
+            3.9375 3.9688 3.9844 3.4922
+    JKG = 19.8020, ramalan = 3.4922, statsmodels = 3.4922
+    alpha terbaik (l_0 = 2): 1.000, JKG = 17.0000
+(2) ARIMA(0,1,1) theta = -0.5, galat sama dengan SES: True
+
+=== blok 2 ===
+(3) Holt-Winters aditif, alpha = beta = gamma = 0.5:
+    galat t = 1..4: 0.000 0.000 1.000 -1.750
+    ramalan t = 13..16:
+    NumPy                : 12.396 16.946 20.635 14.623
+    ETSModel             : 12.396 16.946 20.635 14.623
+    ExponentialSmoothing : 12.396 16.946 20.635 16.599

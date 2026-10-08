@@ -1018,6 +1018,70 @@ def bab11_musiman():
     simpan(fig, "bab11-musiman")
 
 
+# ============================ Bab 12 =================================
+
+def bab12_bobot():
+    j = np.arange(0, 12)
+    fig, ax = plt.subplots(figsize=(4.4, 1.9))
+    for a, wr, mk in ((0.2, BIRU, "o"), (0.5, HIJAU, "s"),
+                      (0.8, MERAH, "^")):
+        ax.plot(j, a * (1 - a) ** j, color=wr, marker=mk, ms=3, lw=0.8,
+                label=f"$\\alpha = {a}$".replace(".", "{,}"))
+    ax.set_xlabel("umur pengamatan $j$ (langkah ke belakang)")
+    ax.set_ylabel(r"bobot $\alpha(1 - \alpha)^j$")
+    ax.legend(fontsize=6)
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab12-bobot")
+
+
+def bab12_ses():
+    from bab01_data import deret_mini
+    from bab12_smoothing import ses
+    y = deret_mini()
+    t = np.arange(1, 9)
+    fig, ax = plt.subplots(figsize=(4.4, 2.0))
+    ax.plot(t, y, color=ABU, lw=0.8, marker="o", ms=3, label="data")
+    for a, wr, ls in ((0.2, BIRU, "-"), (0.5, HIJAU, "--"),
+                      (1.0, MERAH, ":")):
+        l, _ = ses(y, a, 2.0)
+        ax.step(np.r_[t, 9], np.r_[2.0, l], where="post", color=wr,
+                lw=0.9, ls=ls,
+                label=f"$\\alpha = {a}$".replace(".", "{,}"))
+    ax.set_xticks(np.arange(1, 10))
+    ax.set_xlabel("pekan $t$")
+    ax.set_ylabel(r"ramalan $\hat y_t = \ell_{t-1}$")
+    ax.legend(fontsize=5.5, ncol=2)
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab12-ses")
+
+
+def bab12_hw():
+    import warnings
+    from statsmodels.tsa.exponential_smoothing.ets import ETSModel
+    from bab01_data import deret_musiman
+    warnings.filterwarnings("ignore")
+    z = deret_musiman()
+    r = ETSModel(z, error="add", trend="add", seasonal="add",
+                 seasonal_periods=4, initialization_method="known",
+                 initial_level=4.0, initial_trend=1.0,
+                 initial_seasonal=[-3, 1, 4, -2]).smooth([0.5, 0.25, 0.5])
+    t = np.arange(1, 13)
+    fig, ax = plt.subplots(figsize=(4.4, 2.0))
+    ax.plot(t, z, color=BIRU, lw=0.9, marker="o", ms=3, label="data")
+    ax.plot(t, r.fittedvalues, color=JINGGA, lw=0.8, ls="--",
+            marker="x", ms=3, label="ramalan satu langkah")
+    ax.plot(np.arange(13, 17), r.forecast(4), color=HIJAU, lw=0.9,
+            marker="s", ms=3, label="ramalan $t = 13..16$")
+    ax.set_xticks(np.arange(1, 17))
+    ax.set_xlabel("kuartal $t$")
+    ax.legend(fontsize=5.5, loc="upper left")
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab12-hw")
+
+
 # Fungsi gambar baru disisipkan DI ATAS penanda ini.
 
 
