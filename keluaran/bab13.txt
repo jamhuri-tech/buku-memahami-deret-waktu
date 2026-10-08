@@ -1,0 +1,24 @@
+# Blok keluaran yang tercetak di Bab 13 (bab13-evaluasi.tex).
+# Diperiksa oleh periksa.py terhadap kode/bab13_*.py.
+
+=== blok 1 ===
+(1) asal bergulir T = 4..7, ramalan satu langkah t = 5..8:
+    galat rata-rata: -1.5000 -0.2000 -0.1667 -1.1429
+    galat naif     : -2.0000  1.0000  0.0000 -1.0000
+             MAE    RMSE    MAPE    MASE
+    rata-rata  0.7524  0.9518 24.3155  0.5852
+    naif       1.0000  1.2247 31.2500  0.7778
+
+=== blok 2 ===
+(2) Diebold-Mariano rata-rata lawan naif, n = 4:
+    DM = -1.4549, HLN = -1.2600, p (t, db 3) = 0.2968
+
+=== blok 3 ===
+(3) 200 deret AR(2), latih 150, asal bergulir T = 150..199:
+    model       RMSE latih  RMSE uji (rata-rata)
+    AR(2)         0.9863    1.0037
+    AR(10)        0.9586    1.0307
+    rata-rata          -    1.2179
+    naif               -    1.3990
+    DM AR(2) lawan rata-rata menolak pada 5%: 0.585
+    DM AR(2) lawan AR(10)    menolak pada 5%: 0.150

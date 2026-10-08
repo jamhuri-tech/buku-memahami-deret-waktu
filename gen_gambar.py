@@ -1082,6 +1082,80 @@ def bab12_hw():
     simpan(fig, "bab12-hw")
 
 
+# ============================ Bab 13 =================================
+
+def bab13_bergulir():
+    fig, ax = plt.subplots(figsize=(4.6, 1.9))
+    T = 12
+    for k, T0 in enumerate(range(6, 11)):
+        yy = 4 - k
+        ax.barh(yy, T0, left=0.5, height=0.6, color=BIRU_MUDA,
+                edgecolor=BIRU, lw=0.5)
+        ax.barh(yy, 1, left=T0 + 0.5, height=0.6, color=JINGGA,
+                edgecolor=JINGGA, lw=0.5)
+        ax.text(0.3, yy, f"asal {T0}", ha="right", va="center",
+                fontsize=6)
+    ax.set_xlim(-1.5, T + 0.6)
+    ax.set_yticks([])
+    ax.set_xticks(np.arange(1, T + 1))
+    ax.set_xlabel("waktu $t$")
+    ax.text(3.5, 5.0, "data latih", fontsize=6, color=BIRU, ha="center")
+    ax.text(9.5, 5.0, "titik uji", fontsize=6, color=JINGGA, ha="center")
+    ax.set_ylim(-0.6, 5.4)
+    for sp in ("top", "right", "left"):
+        ax.spines[sp].set_visible(False)
+    fig.tight_layout()
+    simpan(fig, "bab13-bergulir")
+
+
+def bab13_mini():
+    from bab01_data import deret_mini
+    y = deret_mini()
+    t = np.arange(1, 9)
+    asal = np.arange(4, 8)
+    fig, ax = plt.subplots(figsize=(4.4, 1.9))
+    ax.plot(t, y, color=BIRU, lw=0.9, marker="o", ms=3, label="data")
+    ax.scatter(asal + 1, [y[:T].mean() for T in asal], color=HIJAU,
+               marker="s", s=14, zorder=3, label="rata-rata")
+    ax.scatter(asal + 1, [y[T - 1] for T in asal], color=MERAH,
+               marker="^", s=14, zorder=3, label="naif")
+    ax.axvspan(4.5, 8.5, color=JINGGA_MUDA, lw=0)
+    ax.set_xticks(t)
+    ax.set_xlabel("pekan $t$")
+    ax.legend(fontsize=5.5, loc="upper right")
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab13-mini")
+
+
+def bab13_latihuji():
+    import subprocess
+    keluaran = subprocess.run([sys.executable, "kode/bab13_simulasi.py"],
+                              capture_output=True, text=True).stdout
+    nilai = {}
+    for b in keluaran.splitlines():
+        bag = b.split()
+        if bag and bag[0] in ("AR(2)", "AR(10)", "rata-rata", "naif"):
+            nilai[bag[0]] = (float(bag[1]) if bag[1] != "-" else np.nan,
+                             float(bag[2]))
+    nama = list(nilai)
+    x = np.arange(len(nama))
+    fig, ax = plt.subplots(figsize=(4.4, 1.9))
+    ax.bar(x - 0.18, [nilai[k][0] for k in nama], width=0.36,
+           color=BIRU, label="latih (dalam sampel)")
+    ax.bar(x + 0.18, [nilai[k][1] for k in nama], width=0.36,
+           color=JINGGA, label="uji (asal bergulir)")
+    ax.set_xticks(x)
+    ax.set_xticklabels(nama)
+    kunci_label(ax, "x")
+    ax.set_ylim(0.8, 1.45)
+    ax.set_ylabel("RMSE")
+    ax.legend(fontsize=5.5, loc="upper left")
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab13-latihuji")
+
+
 # Fungsi gambar baru disisipkan DI ATAS penanda ini.
 
 
