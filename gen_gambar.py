@@ -878,6 +878,85 @@ def bab09_cakupan():
     simpan(fig, "bab09-cakupan")
 
 
+# ============================ Bab 10 =================================
+
+def bab10_alur():
+    from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
+    fig, ax = plt.subplots(figsize=(4.7, 1.9))
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 4)
+    ax.axis("off")
+    kotak = [(0.2, "1. Identifikasi", "grafik, uji akar unit,\nACF, PACF"),
+             (2.7, "2. Estimasi", "MLE, galat baku,\nAIC/BIC"),
+             (5.2, "3. Diagnostik", "residu, Ljung--Box,\nnormalitas"),
+             (7.7, "4. Ramalan", "ramalan dan\nselangnya")]
+    for x, judul, isi in kotak:
+        ax.add_patch(FancyBboxPatch((x, 1.6), 2.1, 1.6,
+                     boxstyle="round,pad=0.05", facecolor=BIRU_MUDA,
+                     edgecolor=BIRU, lw=0.8))
+        ax.text(x + 1.05, 2.85, judul, ha="center", fontsize=6.5,
+                color=BIRU, weight="bold")
+        ax.text(x + 1.05, 2.15, isi.replace("--", "–"),
+                ha="center", va="center", fontsize=5.5, color=ABU)
+    for x in (2.35, 4.85, 7.35):
+        ax.add_patch(FancyArrowPatch((x, 2.4), (x + 0.3, 2.4),
+                     arrowstyle="-|>", mutation_scale=7, color=ABU, lw=0.8))
+    ax.add_patch(FancyArrowPatch((6.25, 1.55), (1.25, 1.55),
+                 connectionstyle="arc3,rad=-0.35", arrowstyle="-|>",
+                 mutation_scale=7, color=MERAH, lw=0.8))
+    ax.text(3.75, 0.25, "residu belum white noise: kembali ke identifikasi",
+            ha="center", fontsize=5.8, color=MERAH)
+    simpan(fig, "bab10-alur")
+
+
+def bab10_pilih():
+    import subprocess
+    keluaran = subprocess.run([sys.executable, "kode/bab10_simulasi.py"],
+                              capture_output=True, text=True).stdout
+    baris = [b for b in keluaran.splitlines()
+             if b.strip().startswith(("AIC", "BIC"))]
+    nilai = [[float(v) for v in b.split(":")[1].split()] for b in baris]
+    p = np.arange(7)
+    fig, ax = plt.subplots(figsize=(4.4, 2.0))
+    lebar = 0.27
+    for k, (nama, wr) in enumerate(zip(("AIC", "AICc", "BIC"),
+                                       (JINGGA, HIJAU, BIRU))):
+        ax.bar(p + (k - 1) * lebar, nilai[k], width=lebar, color=wr,
+               label=nama)
+    ax.set_xticks(p)
+    ax.set_xlabel("orde $p$ terpilih (orde benar 2)")
+    ax.set_ylabel("proporsi")
+    ax.legend(fontsize=6)
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab10-pilih")
+
+
+def bab10_residu():
+    from statsmodels.tsa.arima_process import ArmaProcess
+    from bab01_data import rancang, tabel_lag
+    from bab02_acf import acf_sampel
+    rng = np.random.default_rng(BENIH + 3)
+    y = ArmaProcess([1, -0.5, 0.5]).generate_sample(
+        200, burnin=200, distrvs=rng.standard_normal)
+    t, F, target = tabel_lag(y, 2)
+    b = 1.96 / np.sqrt(len(target))
+    fig, ax = plt.subplots(1, 2, figsize=(4.7, 1.9), sharey=True)
+    for k, p in enumerate((1, 2)):
+        X = rancang(F[:, :p])
+        e = target - X @ np.linalg.lstsq(X, target, rcond=None)[0]
+        ax[k].axhspan(-b, b, color=BIRU_MUDA, lw=0)
+        _stem(ax[k], np.r_[np.nan, acf_sampel(e, 12)[1:]],
+              warna=MERAH if p == 1 else HIJAU)
+        ax[k].set_title(f"ACF residu AR({p})")
+        ax[k].set_xlabel("lag $h$")
+        ax[k].set_ylim(-0.5, 0.35)
+        ax[k].set_xticks([1, 4, 8, 12])
+        _rapikan(ax[k])
+    fig.tight_layout()
+    simpan(fig, "bab10-residu")
+
+
 # Fungsi gambar baru disisipkan DI ATAS penanda ini.
 
 

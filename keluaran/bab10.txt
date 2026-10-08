@@ -1,0 +1,26 @@
+# Blok keluaran yang tercetak di Bab 10 (bab10-diagnostik.tex).
+# Diperiksa oleh periksa.py terhadap kode/bab10_*.py.
+
+=== blok 1 ===
+(1) AR(p) pada sampel yang sama t = 3..8 (m = 6):
+    p   k     JKG     AIC    AICc     BIC
+    0   1  6.8333   2.780   3.780   2.572
+    1   2  5.6970   3.689   7.689   3.273
+    2   3  3.0000   1.841  13.841   1.216
+
+=== blok 2 ===
+(3) orde terpilih, AR(2) benar, T = 100, 1000 deret:
+    p     :     0     1     2     3     4     5     6
+    AIC   : 0.000 0.001 0.705 0.133 0.085 0.046 0.030
+    AICc  : 0.000 0.001 0.744 0.121 0.071 0.039 0.024
+    BIC   : 0.000 0.002 0.956 0.028 0.010 0.004 0.000
+
+=== blok 3 ===
+(4) Ljung-Box H = 10 pada residu AR(2), taraf 5%:
+    db = 10: menolak 0.017; db = 8: menolak 0.043
+
+=== blok 4 ===
+(2) diagnostik residu AR(2) data mini:
+    residu = [ 0.5  0.5 -0.5  1.  -0.5 -1. ]
+    Ljung-Box H = 3, db = 1: Q = 1.6000, p = 0.2059
+    Jarque-Bera: JB = 0.5625, p = 0.7548, kurtosis = 1.5000
