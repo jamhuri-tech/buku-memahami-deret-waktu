@@ -1,0 +1,33 @@
+# Blok keluaran yang tercetak di Bab 4 (bab04-ar.tex).
+# Diperiksa oleh periksa.py terhadap kode/bab04_*.py.
+
+=== blok 1 ===
+(1) AR(2) data mini, phi = (0.5, -0.5):
+    akar phi(z): [0.5+1.3229j 0.5-1.3229j]
+    |z| = [1.4142 1.4142]
+    theta = 1.2094 rad, periode 2 pi/theta = 5.1952
+    faktor redam sqrt(-phi2) = 0.7071
+    rho(0..7):
+      1.000  0.333 -0.333 -0.333  0.000  0.167  0.083 -0.042
+    statsmodels ArmaProcess:
+      1.000  0.333 -0.333 -0.333  0.000  0.167  0.083 -0.042
+    gamma(0)/sigma2 = 1.5000
+
+=== blok 2 ===
+(2) Yule-Walker pada data mini:
+    c(0..2) = [ 1.5    0.125 -0.625]
+    phi = [ 0.1189 -0.4266]  sigma2 = 1.2185
+    statsmodels: [ 0.1189 -0.4266]  sigma2 = 1.2185
+    kuadrat terkecil (Bab 1): [ 0.5 -0.5]
+
+=== blok 3 ===
+(3) AR(2) phi = (0.5, -0.5), mu = 4, 1000 ulangan:
+       T   metode   rata-rata phi1  phi2    RMSE
+       8   KT        0.3196 -0.5721  0.6778
+       8   YW        0.2746 -0.4249  0.4489
+      50   KT        0.4824 -0.5032  0.1810
+      50   YW        0.4683 -0.4815  0.1787
+     200   KT        0.4959 -0.4994  0.0865
+     200   YW        0.4915 -0.4937  0.0865
+    1000   KT        0.4980 -0.4991  0.0395
+    1000   YW        0.4971 -0.4980  0.0396

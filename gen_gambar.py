@@ -406,6 +406,84 @@ def bab03_kali():
     simpan(fig, "bab03-kali")
 
 
+# ============================ Bab 4 ==================================
+
+def bab04_ar1():
+    from statsmodels.tsa.arima_process import ArmaProcess
+    rng = np.random.default_rng(BENIH)
+    T = 100
+    fig, ax = plt.subplots(2, 3, figsize=(4.8, 2.9))
+    for k, phi in enumerate((0.9, 0.3, -0.7)):
+        y = ArmaProcess([1, -phi]).generate_sample(
+            T, burnin=100, distrvs=rng.standard_normal)
+        ax[0, k].plot(np.arange(1, T + 1), y, color=BIRU, lw=0.6)
+        ax[0, k].axhline(0, color=ABU_GARIS, lw=0.5)
+        ax[0, k].set_title(f"$\\phi = {phi}$".replace(".", "{,}"))
+        ax[0, k].set_xlabel("$t$")
+        h = np.arange(0, 11)
+        _stem(ax[1, k], phi ** h)
+        ax[1, k].set_ylim(-1.05, 1.05)
+        ax[1, k].set_xlabel("lag $h$")
+    ax[0, 0].set_ylabel("$y_t$")
+    ax[1, 0].set_ylabel(r"$\rho(h) = \phi^h$")
+    for a in ax.flat:
+        _rapikan(a)
+    fig.tight_layout()
+    simpan(fig, "bab04-ar1")
+
+
+def bab04_segitiga():
+    fig, ax = plt.subplots(figsize=(4.0, 2.6))
+    ax.fill([-2, 0, 2], [-1, 1, -1], color=BIRU_MUDA, lw=0)
+    ax.plot([-2, 0, 2, -2], [-1, 1, -1, -1], color=BIRU, lw=0.8)
+    g = np.linspace(-2, 2, 200)
+    ax.plot(g, -g**2 / 4, color=JINGGA, lw=0.8, ls="--")
+    ax.text(0, -0.72, "akar kompleks\n(gelombang teredam)", ha="center",
+            fontsize=6, color=JINGGA)
+    ax.text(-1.05, 0.25, "akar real", fontsize=6, color=BIRU)
+    ax.scatter([0.5], [-0.5], color=MERAH, s=18, zorder=3)
+    ax.annotate("data mini (KT)\n$(0{,}5;\\,-0{,}5)$", (0.5, -0.5),
+                (0.95, -0.2), fontsize=5.5, color=MERAH,
+                arrowprops=dict(arrowstyle="-", color=MERAH, lw=0.5))
+    ax.scatter([17 / 143], [-61 / 143], color=HIJAU, s=14, marker="s",
+               zorder=3)
+    ax.annotate("Yule--Walker".replace("--", "–"),
+                (17 / 143, -61 / 143), (-1.45, -0.62), fontsize=5.5,
+                color=HIJAU,
+                arrowprops=dict(arrowstyle="-", color=HIJAU, lw=0.5))
+    ax.set_xlim(-2.2, 2.2)
+    ax.set_ylim(-1.2, 1.2)
+    ax.set_xlabel(r"$\phi_1$")
+    ax.set_ylabel(r"$\phi_2$")
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab04-segitiga")
+
+
+def bab04_acf():
+    from bab01_data import deret_mini
+    from bab02_acf import acf_sampel
+    from bab04_ar import acf_ar
+    h = np.arange(0, 11)
+    rho = acf_ar([0.5, -0.5], 10)
+    fig, ax = plt.subplots(figsize=(4.7, 2.0))
+    _stem(ax, rho)
+    g = np.linspace(0, 10, 200)
+    ax.plot(g, np.sqrt(0.5) ** g, color=JINGGA, lw=0.7, ls="--")
+    ax.plot(g, -np.sqrt(0.5) ** g, color=JINGGA, lw=0.7, ls="--",
+            label=r"$\pm(\sqrt{1/2})^h$")
+    r = acf_sampel(deret_mini(), 7)
+    ax.scatter(np.arange(8) + 0.15, r, color=MERAH, marker="x", s=14,
+               zorder=4, label="ACF sampel data mini")
+    ax.set_xticks(h)
+    ax.set_xlabel("lag $h$")
+    ax.set_ylabel(r"$\rho(h)$")
+    ax.legend(fontsize=5.5, loc="upper right")
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab04-acf")
+
+
 # Fungsi gambar baru disisipkan DI ATAS penanda ini.
 
 
