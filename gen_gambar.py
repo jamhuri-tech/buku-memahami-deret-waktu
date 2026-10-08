@@ -724,6 +724,80 @@ def bab07_simulasi():
     simpan(fig, "bab07-simulasi")
 
 
+# ============================ Bab 8 ==================================
+
+def bab08_dua():
+    rng = np.random.default_rng(BENIH)
+    T, n = 100, 30
+    t = np.arange(1, T + 1)
+    fig, (a, b) = plt.subplots(1, 2, figsize=(4.7, 2.1), sharey=True)
+    for _ in range(n):
+        u = np.zeros(T)
+        e = rng.standard_normal(T)
+        for i in range(1, T):
+            u[i] = 0.5 * u[i - 1] + e[i]
+        a.plot(t, 0.2 * t + u, color=BIRU, lw=0.3, alpha=0.6)
+        b.plot(t, np.cumsum(0.2 + rng.standard_normal(T)), color=MERAH,
+               lw=0.3, alpha=0.6)
+    for ax in (a, b):
+        ax.plot(t, 0.2 * t, color="black", lw=0.8, ls="--")
+        ax.set_xlabel("$t$")
+        _rapikan(ax)
+    a.set_title("tren deterministik + AR(1)")
+    b.set_title("random walk + drift")
+    a.set_ylabel("$y_t$")
+    fig.tight_layout()
+    simpan(fig, "bab08-dua")
+
+
+def bab08_tau():
+    import warnings
+    from scipy import stats
+    from statsmodels.tsa.stattools import adfuller
+    warnings.filterwarnings("ignore")
+    rng = np.random.default_rng(BENIH + 1)
+    tau = [adfuller(np.cumsum(rng.standard_normal(100)), maxlag=0,
+                    regression="c", autolag=None)[0] for _ in range(3000)]
+    fig, ax = plt.subplots(figsize=(4.4, 2.0))
+    ax.hist(tau, bins=50, density=True, color=BIRU_MUDA, edgecolor=BIRU,
+            lw=0.4, label=r"$\tau$ di bawah $H_0$")
+    g = np.linspace(-5, 3, 300)
+    ax.plot(g, stats.norm.pdf(g), color=ABU, lw=0.8, label=r"$\mathcal{N}(0,1)$")
+    ax.axvline(-1.645, color=ABU, lw=0.7, ls=":")
+    ax.axvline(-2.86, color=MERAH, lw=0.8, ls="--")
+    ax.text(-2.95, 0.47, "$-2{,}86$", fontsize=6, color=MERAH, ha="right")
+    ax.text(-1.55, 0.47, "$-1{,}645$", fontsize=6, color=ABU)
+    ax.set_xlabel(r"$\tau$")
+    ax.legend(fontsize=5.5, loc="upper right")
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab08-tau")
+
+
+def bab08_palsu():
+    rng = np.random.default_rng(BENIH + 2)
+    T = 100
+    a = np.cumsum(rng.standard_normal(T))
+    b = np.cumsum(rng.standard_normal(T))
+    fig, (k, l) = plt.subplots(1, 2, figsize=(4.7, 2.0))
+    k.plot(a, color=BIRU, lw=0.7, label="$x_t$")
+    k.plot(b, color=JINGGA, lw=0.7, label="$y_t$")
+    k.set_xlabel("$t$")
+    k.legend(fontsize=6)
+    k.set_title("dua random walk bebas")
+    l.scatter(a, b, s=4, color=ABU)
+    w = np.polyfit(a, b, 1)
+    g = np.linspace(a.min(), a.max(), 10)
+    l.plot(g, np.polyval(w, g), color=MERAH, lw=0.9)
+    l.set_xlabel("$x_t$")
+    l.set_ylabel("$y_t$")
+    l.set_title("garis regresi palsu")
+    for ax in (k, l):
+        _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab08-palsu")
+
+
 # Fungsi gambar baru disisipkan DI ATAS penanda ini.
 
 
