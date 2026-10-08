@@ -222,6 +222,105 @@ def bab01_ramalan():
     simpan(fig, "bab01-ramalan")
 
 
+# ============================ Bab 2 ==================================
+
+def _stem(ax, r, warna=BIRU):
+    h = np.arange(len(r))
+    ax.vlines(h, 0, r, color=warna, lw=1.0)
+    ax.scatter(h, r, color=warna, s=8, zorder=3)
+    ax.axhline(0, color=ABU, lw=0.6)
+
+
+def bab02_acf():
+    from bab01_data import deret_mini
+    from bab02_acf import acf_sampel
+    y = deret_mini()
+    T = len(y)
+    r = acf_sampel(y, 7)
+    fig, ax = plt.subplots(figsize=(4.7, 2.0))
+    b = 1.96 / np.sqrt(T)
+    ax.axhspan(-b, b, color=BIRU_MUDA, lw=0)
+    h = np.arange(1, 8)
+    vb = [(1 + 2 * np.sum(r[1:k] ** 2)) / T for k in h]
+    ax.plot(h, 1.96 * np.sqrt(vb), color=JINGGA, lw=0.8, ls="--",
+            drawstyle="steps-mid", label="batas Bartlett")
+    ax.plot(h, -1.96 * np.sqrt(vb), color=JINGGA, lw=0.8, ls="--",
+            drawstyle="steps-mid")
+    _stem(ax, r)
+    teks = ["1", "1/12", "−5/12", "−1/6"]
+    for k, t in enumerate(teks):
+        ax.annotate(t, (k + 0.12, r[k] + (0.05 if r[k] >= 0 else -0.12)),
+                    fontsize=6)
+    ax.text(7.4, b - 0.12, r"$\pm 1{,}96/\sqrt{8}$", fontsize=6,
+            color=BIRU, ha="right")
+    ax.set_xticks(np.arange(8))
+    ax.set_ylim(-1.0, 1.15)
+    ax.set_xlabel("lag $h$")
+    ax.set_ylabel("$r(h)$")
+    ax.legend(loc="upper right", fontsize=5.5)
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab02-acf")
+
+
+def bab02_tiga():
+    from bab02_acf import acf_sampel
+    rng = np.random.default_rng(BENIH)
+    T = 100
+    t = np.arange(1, T + 1)
+    deret = [("white noise", rng.standard_normal(T)),
+             ("random walk", np.cumsum(rng.standard_normal(T))),
+             ("tren + noise", 0.1 * t + rng.standard_normal(T))]
+    fig, ax = plt.subplots(2, 3, figsize=(4.8, 2.9))
+    b = 1.96 / np.sqrt(T)
+    for k, (nama, s) in enumerate(deret):
+        ax[0, k].plot(t, s, color=BIRU, lw=0.6)
+        ax[0, k].set_title(nama)
+        ax[0, k].set_xlabel("$t$")
+        ax[1, k].axhspan(-b, b, color=BIRU_MUDA, lw=0)
+        _stem(ax[1, k], acf_sampel(s, 20))
+        ax[1, k].set_ylim(-0.4, 1.05)
+        ax[1, k].set_xlabel("lag $h$")
+    ax[0, 0].set_ylabel("$y_t$")
+    ax[1, 0].set_ylabel("$r(h)$")
+    for a in ax.flat:
+        _rapikan(a)
+    fig.tight_layout()
+    simpan(fig, "bab02-tiga")
+
+
+def bab02_simulasi():
+    from scipy import stats
+    from bab02_acf import acf_sampel, ljung_box
+    rng = np.random.default_rng(BENIH)
+    R, T, H = 2000, 100, 10
+    r1 = np.empty(R)
+    Q = np.empty(R)
+    for k in range(R):
+        e = rng.standard_normal(T)
+        r1[k] = acf_sampel(e, 1)[1]
+        Q[k] = ljung_box(e, H)[0]
+    fig, (a, b) = plt.subplots(1, 2, figsize=(4.7, 2.0))
+    a.hist(r1, bins=40, density=True, color=BIRU_MUDA, edgecolor=BIRU,
+           lw=0.4)
+    g = np.linspace(-0.4, 0.4, 200)
+    a.plot(g, stats.norm.pdf(g, 0, 1 / np.sqrt(T)), color=MERAH, lw=0.9)
+    a.set_xlabel("$r(1)$")
+    a.set_title(r"$r(1)$ lawan $\mathcal{N}(0, 1/T)$")
+    b.hist(Q, bins=40, density=True, color=BIRU_MUDA, edgecolor=BIRU,
+           lw=0.4)
+    g = np.linspace(0, 35, 200)
+    b.plot(g, stats.chi2.pdf(g, H), color=MERAH, lw=0.9)
+    b.axvline(stats.chi2.ppf(0.95, H), color=JINGGA, lw=0.8, ls="--")
+    b.set_xlabel("$Q$")
+    b.set_title("Ljung\u2013Box lawan "
+                r"$\chi^2_{10}$")
+    for ax in (a, b):
+        _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab02-simulasi")
+
+
 # Fungsi gambar baru disisipkan DI ATAS penanda ini.
 
 

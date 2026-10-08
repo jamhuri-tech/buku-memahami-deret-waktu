@@ -1,0 +1,46 @@
+# Blok keluaran yang tercetak di Bab 2 (bab02-acf.tex).
+# Diperiksa oleh periksa.py terhadap kode/bab02_*.py.
+
+=== blok 1 ===
+(1) simpangan dan hasil kali lag h:
+    d = [-2  1  2  1 -1  0  0 -1]
+    h = 1: [-2  2  2 -1  0  0  0]  jumlah   1
+    h = 2: [-4  1 -2  0  0  0]  jumlah  -5
+    h = 3: [-2 -1  0  0  1]  jumlah  -2
+(2) autokovarians dan ACF sampel:
+    c(h) = [ 1.5    0.125 -0.625 -0.25 ]
+    r(h) = [ 1.      0.0833 -0.4167 -0.1667]
+    statsmodels acf: [ 1.      0.0833 -0.4167 -0.1667]
+    jumlah r(1..7) = -0.5000
+
+=== blok 2 ===
+(3) matriks autokovarians 3 x 3:
+    [ 1.5    0.125 -0.625]
+    [ 0.125  1.5    0.125]
+    [-0.625  0.125  1.5]
+    det = 2.7227, nilai eigen = [0.8285 1.5465 2.125 ]
+
+=== blok 3 ===
+(4) batas white noise dan Bartlett (h = 3):
+    1.96/sqrt(T) = 0.6930
+    Var r(3) ~ 0.1701, batas Bartlett = 0.8085
+    |r(3)| = 0.1667
+
+=== blok 4 ===
+(5) Ljung-Box dan Box-Pierce, H = 2:
+    Q = 2.3942, nilai-p = 0.3021, exp(-Q/2) = 0.3021
+    Box-Pierce = 1.4444
+    statsmodels: Q = 2.3942, p = 0.3021, BP = 1.4444
+
+=== blok 5 ===
+(6) white noise, 2000 deret, T = 100:
+    rata-rata r(1) = -0.0116  (-1/T = -0.0100)
+    simpangan baku r(1) = 0.0977  (1/sqrt(T) = 0.1000)
+    proporsi |r(h)| > 1.96/sqrt(T), h = 1..20: 0.0373
+    Ljung-Box H = 10 menolak pada 5%: 0.0655
+
+=== blok 6 ===
+(7) ACF sampel lag 1, 5, 10:
+    white noise    0.1360 -0.1972  0.0069
+    random walk    0.9153  0.6176  0.4648
+    tren + noise   0.8792  0.7402  0.5983
