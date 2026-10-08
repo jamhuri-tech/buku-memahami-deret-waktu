@@ -571,6 +571,78 @@ def bab05_identifikasi():
     simpan(fig, "bab05-identifikasi")
 
 
+# ============================ Bab 6 ==================================
+
+def bab06_ma1():
+    th = np.linspace(-3, 3, 600)
+    fig, ax = plt.subplots(figsize=(4.4, 2.1))
+    ax.plot(th, th / (1 + th**2), color=BIRU, lw=1.0)
+    ax.axvspan(-1, 1, color=BIRU_MUDA, lw=0)
+    ax.axhline(1 / 12, color=MERAH, lw=0.7, ls="--")
+    for v in (6 - np.sqrt(35), 6 + np.sqrt(35)):
+        if v < 3:
+            ax.scatter([v], [1 / 12], color=MERAH, s=12, zorder=3)
+    for a, b in ((0.5, 2.0),):
+        ax.scatter([a, b], [0.4, 0.4], color=JINGGA, s=12, zorder=3)
+        ax.annotate(r"$\theta = 0{,}5$ dan $\theta = 2$", (2.0, 0.4),
+                    (1.5, 0.52), fontsize=6, color=JINGGA)
+    ax.text(0, -0.42, "dapat dibalik", ha="center", fontsize=6,
+            color=BIRU)
+    ax.text(2.2, 0.12, r"$r(1) = 1/12$", fontsize=6, color=MERAH)
+    ax.set_xlabel(r"$\theta$")
+    ax.set_ylabel(r"$\rho(1) = \theta/(1 + \theta^2)$")
+    ax.set_ylim(-0.55, 0.62)
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab06-ma1")
+
+
+def bab06_arma():
+    from statsmodels.tsa.arima_process import ArmaProcess
+    proses = [("MA(2), $\\theta = (1, \\frac{1}{2})$", [1], [1, 1, 0.5]),
+              ("ARMA(1,1), $\\phi = \\theta = \\frac{1}{2}$", [1, -0.5],
+               [1, 0.5])]
+    fig, ax = plt.subplots(2, 2, figsize=(4.7, 2.7))
+    for k, (nama, ar, ma) in enumerate(proses):
+        p = ArmaProcess(ar, ma)
+        _stem(ax[k, 0], np.r_[np.nan, p.acf(9)[1:]])
+        _stem(ax[k, 1], np.r_[np.nan, p.pacf(9)[1:]], warna=HIJAU)
+        ax[k, 0].set_title(nama + ": ACF")
+        ax[k, 1].set_title("PACF")
+        for a in ax[k]:
+            a.set_ylim(-0.6, 0.85)
+            a.set_xticks([1, 4, 8])
+    for a in ax[1]:
+        a.set_xlabel("lag $h$")
+    for a in ax.flat:
+        _rapikan(a)
+    fig.tight_layout()
+    simpan(fig, "bab06-arma")
+
+
+def bab06_balik():
+    rng = np.random.default_rng(BENIH)
+    T = 30
+    eps = rng.standard_normal(61)
+    fig, ax = plt.subplots(figsize=(4.4, 2.0))
+    for th, wr in ((0.5, HIJAU), (2.0, MERAH)):
+        y = eps[1:] + th * eps[:-1]
+        e, seb = np.zeros(60), 0.0
+        for t in range(60):
+            e[t] = y[t] - th * seb
+            seb = e[t]
+        g = np.abs(e - eps[1:])[:T]
+        ax.semilogy(np.arange(1, T + 1), g, color=wr, lw=1.0,
+                    marker="o", ms=2,
+                    label=f"$\\theta = {th}$".replace(".", "{,}"))
+    ax.set_xlabel("$t$")
+    ax.set_ylabel(r"$|e_t - \varepsilon_t|$")
+    ax.legend(fontsize=6)
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab06-balik")
+
+
 # Fungsi gambar baru disisipkan DI ATAS penanda ini.
 
 
