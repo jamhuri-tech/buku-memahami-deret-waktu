@@ -321,6 +321,91 @@ def bab02_simulasi():
     simpan(fig, "bab02-simulasi")
 
 
+# ============================ Bab 3 ==================================
+
+def bab03_data():
+    from bab01_data import deret_musiman
+    y = deret_musiman()
+    t = np.arange(1, 13)
+    kw = (t - 1) % 4
+    w = np.array([1, 1, 4, 7, 1.0])
+    g = np.linspace(1, 12, 200)
+    fig, ax = plt.subplots(figsize=(4.7, 2.2))
+    ax.plot(t, y, color=ABU_GARIS, lw=0.8, zorder=1)
+    warna = [JINGGA, BIRU, MERAH, HIJAU]
+    for q in range(4):
+        s_ = kw == q
+        ax.scatter(t[s_], y[s_], color=warna[q], s=16, zorder=3,
+                   label=f"kuartal {q + 1}")
+        geser = 0 if q == 0 else w[1 + q]
+        ax.plot(g, w[0] + w[1] * g + geser, color=warna[q], lw=0.6,
+                ls="--")
+    for x in (4.5, 8.5):
+        ax.axvline(x, color=ABU_GARIS, lw=0.5, ls=":")
+    ax.set_xticks(t)
+    ax.set_xlabel("kuartal ke-$t$")
+    ax.set_ylabel("$y_t$ (ratus orang)")
+    ax.legend(loc="upper left", fontsize=5.5, ncol=2)
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab03-data")
+
+
+def bab03_dekomposisi():
+    from statsmodels.tsa.seasonal import seasonal_decompose
+    from bab01_data import deret_musiman
+    y = deret_musiman()
+    t = np.arange(1, 13)
+    dk = seasonal_decompose(y, model="additive", period=4)
+    fig, ax = plt.subplots(2, 2, figsize=(4.8, 3.0))
+    a = ax[0, 0]
+    a.plot(t, y, color=BIRU, lw=0.9, marker="o", ms=2.5, label="$y_t$")
+    a.plot(t, dk.trend, color=MERAH, lw=1.0, marker="s", ms=2.5,
+           label="$m_t$ (MA $2\\times 4$)")
+    a.set_title("data dan tren")
+    a.legend(fontsize=5.5, loc="upper left")
+    a = ax[0, 1]
+    a.axhline(0, color=ABU, lw=0.5)
+    a.bar(t, dk.seasonal, color=np.where(dk.seasonal >= 0, BIRU, JINGGA),
+          width=0.6)
+    a.set_title("musiman $S_t$")
+    a = ax[1, 0]
+    a.axhline(0, color=ABU, lw=0.5)
+    a.bar(t, dk.resid, color=ABU, width=0.6)
+    a.set_title(r"sisa $R_t = y_t - m_t - S_t$")
+    a = ax[1, 1]
+    d4 = y[4:] - y[:-4]
+    a.axhline(4, color=MERAH, lw=0.7, ls="--")
+    a.bar(t[4:], d4, color=HIJAU, width=0.6)
+    a.set_xlim(0.5, 12.5)
+    a.set_title(r"diferensi musiman $\nabla_4 y_t$")
+    for b in ax.flat:
+        b.set_xlim(0.5, 12.5)
+        b.set_xticks([1, 4, 8, 12])
+        b.set_xlabel("$t$")
+        _rapikan(b)
+    fig.tight_layout()
+    simpan(fig, "bab03-dekomposisi")
+
+
+def bab03_kali():
+    rng = np.random.default_rng(BENIH)
+    T = 40
+    t = np.arange(1, T + 1)
+    S = np.array([0.7, 1.0, 1.4, 0.9])[(t - 1) % 4]
+    y = 50 * 1.04**t * S * np.exp(0.02 * rng.standard_normal(T))
+    fig, (a, b) = plt.subplots(1, 2, figsize=(4.7, 2.0))
+    a.plot(t, y, color=BIRU, lw=0.8)
+    a.set_title("$y_t$: ayunan membesar")
+    b.plot(t, np.log(y), color=HIJAU, lw=0.8)
+    b.set_title(r"$\log y_t$: ayunan tetap")
+    for ax in (a, b):
+        ax.set_xlabel("$t$ (kuartal)")
+        _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab03-kali")
+
+
 # Fungsi gambar baru disisipkan DI ATAS penanda ini.
 
 

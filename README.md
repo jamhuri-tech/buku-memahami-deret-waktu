@@ -53,7 +53,7 @@ Actions setiap kali kode berubah.
 
 ```
 kode/
-  bab01_data.py      data mini, tabel lag, kuadrat terkecil, ramalan
+  bab01_data.py      data mini, data musiman, tabel lag, ramalan
   babNN_*.py         kode Bab NN
   babNN_contoh.py    pemeriksa hitungan tangan Contoh Soal Bab NN
 data/SUMBER.md       asal setiap data: alamat, tanggal, lisensi

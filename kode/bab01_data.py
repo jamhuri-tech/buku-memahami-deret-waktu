@@ -12,6 +12,19 @@ BENIH = 20261008
 Y_MINI = np.array([2, 5, 6, 5, 3, 4, 4, 3], dtype=float)
 
 
+# Data musiman: kunjungan wisatawan per kuartal (ratus orang) di sebuah
+# desa wisata, tiga tahun (t = 1, ..., 12; kuartal 1, 2, 3, 4 berulang).
+# Tepat y = 1 + t + (0, 4, 7, 1)[kuartal] + r dengan
+# r = (0, 0, 1, -1, 0, 0, -2, 2, 0, 0, 1, -1).
+Y_MUSIM = np.array([2, 7, 12, 5, 6, 11, 13, 12, 10, 15, 20, 13],
+                   dtype=float)
+
+
+def deret_musiman():
+    """Deret kuartalan y_1, ..., y_12 (periode 4)."""
+    return Y_MUSIM.copy()
+
+
 def deret_mini():
     """Deret y_1, ..., y_8 (indeks NumPy 0, ..., 7)."""
     return Y_MINI.copy()
