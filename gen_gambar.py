@@ -1225,6 +1225,109 @@ def bab14_var():
     simpan(fig, "bab14-var")
 
 
+# ============================ Bab 15 =================================
+
+def _inflasi():
+    from bab15_studikasus import muat
+    tahun, bulan, y = muat()
+    return tahun, bulan, y, tahun + (bulan - 0.5) / 12
+
+
+def bab15_deret():
+    tahun, bulan, y, w = _inflasi()
+    fig, ax = plt.subplots(figsize=(4.7, 2.1))
+    ax.axvspan(2015, 2024, color=BIRU_MUDA, lw=0)
+    ax.axvspan(2024, w[-1] + 0.1, color=JINGGA_MUDA, lw=0)
+    ax.axhline(0, color=ABU_GARIS, lw=0.6)
+    ax.plot(w, y, color=BIRU, lw=0.6)
+    for a, b in ((2006, 2014), (2015, 2023)):
+        s = y[(tahun >= a) & (tahun <= b)]
+        ax.hlines(s.mean(), a, b + 1, color=MERAH, lw=0.8, ls="--")
+    tanda = {(2008, 6): "BBM", (2013, 7): "BBM", (2014, 12): "BBM",
+             (2022, 9): "BBM", (2025, 1): "", (2025, 3): "listrik"}
+    for (a, b), teks in tanda.items():
+        i = np.flatnonzero((tahun == a) & (bulan == b))[0]
+        ax.scatter(w[i], y[i], s=9, color=JINGGA, zorder=3)
+        if teks:
+            dy = 0.18 if y[i] > 0 else -0.35
+            ax.annotate(teks, (w[i], y[i] + dy), ha="center",
+                        fontsize=5.5, color=JINGGA)
+    ax.text(2019.5, 3.0, "latih", ha="center", fontsize=6, color=BIRU)
+    ax.text(2025.4, 3.0, "uji", ha="center", fontsize=6, color=JINGGA)
+    ax.set_ylim(-1.1, 3.5)
+    ax.set_xlim(2006, w[-1] + 0.1)
+    ax.set_xticks(range(2006, 2027, 4))
+    ax.set_xticklabels([str(v) for v in range(2006, 2027, 4)])
+    kunci_label(ax, "x")
+    ax.set_ylabel("inflasi bulanan (%)")
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab15-deret")
+
+
+def bab15_acf():
+    from statsmodels.tsa.stattools import acf, pacf
+    tahun, _, y, _ = _inflasi()
+    s = y[(tahun >= 2015) & (tahun <= 2023)]
+    b = 1.96 / np.sqrt(len(s))
+    fig, ax = plt.subplots(1, 2, figsize=(4.7, 1.9), sharey=True)
+    _stem(ax[0], np.r_[np.nan, acf(s, nlags=26)[1:]])
+    _stem(ax[1], np.r_[np.nan, pacf(s, nlags=26)[1:]], warna=HIJAU)
+    ax[0].set_title("ACF")
+    ax[1].set_title("PACF")
+    for a in ax:
+        a.axhspan(-b, b, color=BIRU_MUDA, lw=0)
+        a.set_xticks([1, 6, 12, 18, 24])
+        a.set_xlabel("lag $h$ (bulan)")
+        _rapikan(a)
+    fig.tight_layout()
+    simpan(fig, "bab15-acf")
+
+
+def bab15_ramalan():
+    import warnings
+    from bab15_studikasus import sarima
+    warnings.filterwarnings("ignore")
+    tahun, bulan, y, w = _inflasi()
+    awal = int((tahun < 2015).sum())
+    yy, ww = y[awal:], w[awal:]
+    n0 = int(((tahun >= 2015) & (tahun <= 2023)).sum())
+    f1, lo1, hi1 = [], [], []
+    for o in range(n0, len(yy)):
+        f = sarima(yy[:o]).get_forecast(1)
+        f1.append(f.predicted_mean[0])
+        lo, hi = f.conf_int(alpha=0.05)[0]
+        lo1.append(lo)
+        hi1.append(hi)
+    d = np.zeros((len(yy), 3))
+    for j in range(3):
+        d[(tahun[awal:] == 2025) & (bulan[awal:] == j + 1), j] = 1
+    f = sarima(yy, exog=d).get_forecast(12, exog=np.zeros((12, 3)))
+    sel = f.conf_int(alpha=0.05)
+    wf = ww[-1] + np.arange(1, 13) / 12
+    fig, ax = plt.subplots(figsize=(4.7, 2.1))
+    ax.axhline(0, color=ABU_GARIS, lw=0.6)
+    k = n0 - 24
+    ax.plot(ww[k:], yy[k:], color=BIRU, lw=0.8, marker="o", ms=1.8,
+            label="nyata")
+    ax.fill_between(ww[n0:], lo1, hi1, color=JINGGA_MUDA, lw=0)
+    ax.plot(ww[n0:], f1, color=JINGGA, lw=0.8,
+            label="ramalan satu langkah")
+    ax.fill_between(wf, sel[:, 0], sel[:, 1], color=HIJAU_MUDA, lw=0)
+    ax.plot(wf, f.predicted_mean, color=HIJAU, lw=0.9,
+            label="ramalan 12 bulan")
+    ax.axvline(ww[n0] - 1 / 24, color=ABU, lw=0.6, ls=":")
+    ax.set_xticks(range(2022, 2028))
+    ax.set_xticklabels([str(v) for v in range(2022, 2028)])
+    kunci_label(ax, "x")
+    ax.set_ylabel("inflasi bulanan (%)")
+    ax.legend(fontsize=5.5, loc="upper left", ncol=3)
+    ax.set_ylim(-1.1, 2.1)
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab15-ramalan")
+
+
 # Fungsi gambar baru disisipkan DI ATAS penanda ini.
 
 
