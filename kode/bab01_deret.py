@@ -50,7 +50,8 @@ print(f"    sigma2 = {fit.sigma2:.4f}  (JKG/m)")
 
 f = ramal(y, w, 6)
 print("(6) ramalan rekursif t = 9, ..., 14:")
-print("    ", np.round(f, 4))
-print("    statsmodels:", np.round(fit.predict(start=8, end=13), 4))
+print("    ", " ".join(f"{v:.6f}" for v in f))
+print("    statsmodels:")
+print("    ", " ".join(f"{v:.6f}" for v in fit.predict(start=8, end=13)))
 print(f"    rata-rata jangka panjang w0/(1 - w1 - w2) ="
       f" {w[0] / (1 - w[1] - w[2]):.4f}")
