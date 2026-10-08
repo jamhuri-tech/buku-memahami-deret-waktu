@@ -115,7 +115,7 @@ if __name__ == "__main__":
     for a, b in (("SARIMA", "naif musiman"), ("SARIMA", "rata bulanan"),
                  ("ARMA(2,2)", "SARIMA")):
         _, hln, p = uji_dm(e[a], e[b], 1)
-        print(f"    DM {a} vs {b}: HLN {hln:.3f}, p {p:.3f}")
+        print(f"    DM {a} vs {b}: HLN {hln:.2f}, p {p:.2f}")
     print(f"    selang 95% SARIMA memuat nilai nyata: {cakup} dari"
           f" {len(yy) - n0}")
 

@@ -37,9 +37,9 @@
     rata bulanan   0.325  0.465  1.213  0.249
     SARIMA         0.324  0.448  1.209  0.232
     ARMA(2,2)      0.311  0.441  1.162  0.230
-    DM SARIMA vs naif musiman: HLN -1.359, p 0.184
-    DM SARIMA vs rata bulanan: HLN -0.679, p 0.502
-    DM ARMA(2,2) vs SARIMA: HLN -0.347, p 0.731
+    DM SARIMA vs naif musiman: HLN -1.36, p 0.18
+    DM SARIMA vs rata bulanan: HLN -0.68, p 0.50
+    DM ARMA(2,2) vs SARIMA: HLN -0.35, p 0.73
     selang 95% SARIMA memuat nilai nyata: 28 dari 33
 
 === blok 5 ===
