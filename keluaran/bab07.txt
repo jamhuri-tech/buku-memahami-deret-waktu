@@ -1,0 +1,32 @@
+# Blok keluaran yang tercetak di Bab 7 (bab07-estimasi.tex).
+# Diperiksa oleh periksa.py terhadap kode/bab07_*.py.
+
+=== blok 1 ===
+(1) CSS MA(1) data mini (mu = 4), Gauss-Newton dari 0:
+    k =  0: theta = 0.0000, S = 12.0000
+    k =  1: theta = 0.0909, S = 11.8282
+    k =  2: theta = 0.1725, S = 11.6990
+    k =  3: theta = 0.2361, S = 11.6257
+    k =  5: theta = 0.2966, S = 11.5909
+    k = 10: theta = 0.3107, S = 11.5894
+    k = 29: theta = 0.3108, S = 11.5894
+
+=== blok 2 ===
+(2) AR(1) data mini, tiga penaksir phi:
+    kuadrat terkecil (CSS) : 0.0658
+    Yule-Walker r(1)       : 0.0833
+    MLE eksak (ARIMA)      : 0.134, mu = 3.944
+    log-kem. phi = 0.5, mu = 4, s2 = 1: -13.8703
+
+=== blok 3 ===
+(3) galat baku AR(2) data mini:
+    s2 (X'X)^-1, s2 = 1     : [0.4273 0.3045]
+    AutoReg (s2 = JKG/m)    : [0.3021 0.2153]
+    asimtotik sigma2 G^-1/m : [0.3536 0.3536]
+
+=== blok 4 ===
+(4) MA(1) theta = 0.5, T = 50, 500 deret:
+    CSS: rata-rata 0.498, simp. baku 0.139
+    MLE: rata-rata 0.501, simp. baku 0.145
+    asimtotik sqrt((1 - theta^2)/T) = 0.1225
+    selang 95% MLE memuat theta: 0.928

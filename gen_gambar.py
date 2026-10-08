@@ -643,6 +643,87 @@ def bab06_balik():
     simpan(fig, "bab06-balik")
 
 
+# ============================ Bab 7 ==================================
+
+def bab07_css():
+    from bab01_data import deret_mini
+    from bab07_estimasi import galat_ma1, gauss_newton_ma1
+    d = deret_mini() - 4
+    th = np.linspace(-0.95, 0.95, 400)
+    S = [galat_ma1(d, v)[0] @ galat_ma1(d, v)[0] for v in th]
+    jalur = gauss_newton_ma1(d, 0.0, 30)
+    fig, ax = plt.subplots(figsize=(4.4, 2.1))
+    ax.plot(th, S, color=BIRU, lw=1.0)
+    for k in (0, 1, 2, 3, 5):
+        ax.scatter([jalur[k][0]], [jalur[k][1]], color=MERAH, s=12,
+                   zorder=3)
+        ax.annotate(str(k), (jalur[k][0], jalur[k][1]),
+                    (jalur[k][0] - 0.02, jalur[k][1] + 0.35), fontsize=6,
+                    color=MERAH)
+    ax.scatter([jalur[-1][0]], [jalur[-1][1]], color=HIJAU, s=16,
+               marker="s", zorder=3)
+    ax.set_xlabel(r"$\theta$")
+    ax.set_ylabel(r"$S(\theta) = \sum e_t^2$")
+    ax.set_ylim(11, 17)
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab07-css")
+
+
+def bab07_loglik():
+    from bab01_data import deret_mini
+    y = deret_mini()
+    d = y - 4
+    T = len(d)
+    ph = np.linspace(-0.9, 0.9, 400)
+    eks, bsy = [], []
+    for p in ph:
+        q = (1 - p**2) * d[0] ** 2 + np.sum((d[1:] - p * d[:-1]) ** 2)
+        eks.append(-T / 2 * np.log(2 * np.pi * q / T) - T / 2
+                   + 0.5 * np.log(1 - p**2))
+        qc = np.sum((d[1:] - p * d[:-1]) ** 2)
+        bsy.append(-(T - 1) / 2 * np.log(2 * np.pi * qc / (T - 1))
+                   - (T - 1) / 2)
+    eks, bsy = np.array(eks), np.array(bsy)
+    fig, ax = plt.subplots(figsize=(4.4, 2.1))
+    ax.plot(ph, eks, color=BIRU, lw=1.0, label="eksak")
+    ax.plot(ph, bsy, color=JINGGA, lw=1.0, ls="--", label="bersyarat")
+    for v, wr in ((eks, BIRU), (bsy, JINGGA)):
+        k = np.argmax(v)
+        ax.scatter([ph[k]], [v[k]], color=wr, s=12, zorder=3)
+    ax.set_xlabel(r"$\phi$")
+    ax.set_ylabel(r"log-kemungkinan (profil $\sigma^2$)")
+    ax.legend(fontsize=6)
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab07-loglik")
+
+
+def bab07_simulasi():
+    import warnings
+    from statsmodels.tsa.arima.model import ARIMA
+    from statsmodels.tsa.arima_process import ArmaProcess
+    from bab07_estimasi import gauss_newton_ma1
+    warnings.filterwarnings("ignore")
+    rng = np.random.default_rng(BENIH)
+    proses = ArmaProcess([1], [1, 0.5])
+    css, mle = [], []
+    for _ in range(500):
+        y = proses.generate_sample(50, distrvs=rng.standard_normal)
+        css.append(gauss_newton_ma1(y - y.mean(), 0.0, 30)[-1][0])
+        mle.append(ARIMA(y, order=(0, 0, 1)).fit().params[1])
+    fig, ax = plt.subplots(figsize=(4.4, 2.0))
+    b = np.linspace(-0.2, 1.0, 37)
+    ax.hist(css, bins=b, color=JINGGA, alpha=0.5, label="CSS")
+    ax.hist(mle, bins=b, color=BIRU, alpha=0.5, label="MLE")
+    ax.axvline(0.5, color=MERAH, lw=0.8, ls="--")
+    ax.set_xlabel(r"$\hat\theta$")
+    ax.legend(fontsize=6)
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab07-simulasi")
+
+
 # Fungsi gambar baru disisipkan DI ATAS penanda ini.
 
 
