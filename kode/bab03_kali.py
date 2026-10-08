@@ -16,7 +16,7 @@ def ayunan(v):
     return np.ptp(v.reshape(-1, 4), axis=1)
 
 
-print("(8) musiman multiplikatif, T = 40 kuartal:")
+print("(3) musiman multiplikatif, T = 40 kuartal:")
 a, b = ayunan(y), ayunan(np.log(y))
 print("    rata-rata ayunan tahun 1-3 dan tahun 8-10:")
 print(f"    y     : {a[:3].mean():7.2f} {a[-3:].mean():7.2f}")
@@ -24,5 +24,5 @@ print(f"    log y : {b[:3].mean():7.4f} {b[-3:].mean():7.4f}")
 print(f"    log 1.4 - log 0.7 = {np.log(2):.4f}")
 
 st = STL(np.log(y), period=4, robust=True).fit()
-print("(9) STL pada log y, faktor musiman exp(S), tahun terakhir:")
+print("(4) STL pada log y, faktor musiman exp(S), tahun terakhir:")
 print("    ", np.round(np.exp(st.seasonal[-4:]), 3))

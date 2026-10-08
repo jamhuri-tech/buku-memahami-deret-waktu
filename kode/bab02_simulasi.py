@@ -18,7 +18,7 @@ for k in range(R):
     luar[k] = np.mean(np.abs(r[1:]) > 1.96 / np.sqrt(T))
     tolak[k] = ljung_box(e, H)[1] < 0.05
 
-print(f"(6) white noise, {R} deret, T = {T}:")
+print(f"(3) white noise, {R} deret, T = {T}:")
 print(f"    rata-rata r(1) = {r1.mean():.4f}  (-1/T = {-1 / T:.4f})")
 print(f"    simpangan baku r(1) = {r1.std():.4f}"
       f"  (1/sqrt(T) = {1 / np.sqrt(T):.4f})")
@@ -28,7 +28,7 @@ print(f"    Ljung-Box H = {H} menolak pada 5%: {tolak.mean():.4f}")
 w = np.cumsum(rng.standard_normal(T))
 t = np.arange(1, T + 1)
 tr = 0.1 * t + rng.standard_normal(T)
-print("(7) ACF sampel lag 1, 5, 10:")
+print("(4) ACF sampel lag 1, 5, 10:")
 for nama, s in [("white noise", rng.standard_normal(T)),
                 ("random walk", w), ("tren + noise", tr)]:
     r = acf(s, nlags=10)
