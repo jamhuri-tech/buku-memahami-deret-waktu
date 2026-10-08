@@ -1156,6 +1156,75 @@ def bab13_latihuji():
     simpan(fig, "bab13-latihuji")
 
 
+# ============================ Bab 14 =================================
+
+def _garch_sim():
+    rng = np.random.default_rng(BENIH + 4)
+    T, om, al, be = 2000, 0.05, 0.2, 0.75
+    z = rng.standard_normal(T)
+    e, s2 = np.zeros(T), np.zeros(T)
+    s2[0] = 1.0
+    e[0] = z[0]
+    for t in range(1, T):
+        s2[t] = om + al * e[t - 1] ** 2 + be * s2[t - 1]
+        e[t] = np.sqrt(s2[t]) * z[t]
+    return e, s2
+
+
+def bab14_garch():
+    e, s2 = _garch_sim()
+    e, s2 = e[:600], s2[:600]
+    t = np.arange(1, len(e) + 1)
+    fig, ax = plt.subplots(figsize=(4.7, 1.9))
+    ax.plot(t, e, color=BIRU, lw=0.4)
+    ax.plot(t, 2 * np.sqrt(s2), color=MERAH, lw=0.7)
+    ax.plot(t, -2 * np.sqrt(s2), color=MERAH, lw=0.7)
+    ax.set_xlabel("$t$")
+    ax.set_ylabel(r"$\varepsilon_t$, $\pm 2\sigma_t$")
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab14-garch")
+
+
+def bab14_acfgarch():
+    from bab02_acf import acf_sampel
+    e, _ = _garch_sim()
+    b = 1.96 / np.sqrt(len(e))
+    fig, ax = plt.subplots(1, 2, figsize=(4.7, 1.9), sharey=True)
+    for k, (v, judul) in enumerate(((e, r"ACF $\varepsilon_t$"),
+                                    (e**2, r"ACF $\varepsilon_t^2$"))):
+        ax[k].axhspan(-b, b, color=BIRU_MUDA, lw=0)
+        _stem(ax[k], np.r_[np.nan, acf_sampel(v, 20)[1:]],
+              warna=BIRU if k == 0 else MERAH)
+        ax[k].set_title(judul)
+        ax[k].set_xlabel("lag $h$")
+        ax[k].set_xticks([1, 5, 10, 15, 20])
+        _rapikan(ax[k])
+    fig.tight_layout()
+    simpan(fig, "bab14-acfgarch")
+
+
+def bab14_var():
+    A = np.array([[0.5, 0.2], [0.0, 0.4]])
+    H = 12
+    r = np.zeros((H + 1, 2))
+    v = np.array([0.0, 1.0])
+    for h in range(H + 1):
+        r[h] = v
+        v = A @ v
+    fig, ax = plt.subplots(figsize=(4.4, 1.9))
+    ax.plot(np.arange(H + 1), r[:, 1], color=BIRU, marker="o", ms=3,
+            lw=0.9, label="respons $y_{2}$")
+    ax.plot(np.arange(H + 1), r[:, 0], color=JINGGA, marker="s", ms=3,
+            lw=0.9, label="respons $y_{1}$")
+    ax.set_xlabel("langkah sesudah kejutan $h$")
+    ax.set_ylabel("respons")
+    ax.legend(fontsize=6)
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab14-var")
+
+
 # Fungsi gambar baru disisipkan DI ATAS penanda ini.
 
 
