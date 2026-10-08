@@ -484,6 +484,93 @@ def bab04_acf():
     simpan(fig, "bab04-acf")
 
 
+# ============================ Bab 5 ==================================
+
+def bab05_pola():
+    from statsmodels.tsa.arima_process import ArmaProcess
+    proses = [("AR(1), $\\phi = 0{,}7$", [1, -0.7], [1]),
+              ("AR(2), $\\phi = (\\frac{1}{2}, -\\frac{1}{2})$", [1, -0.5, 0.5],
+               [1]),
+              ("MA(1), $\\theta = 0{,}5$", [1], [1, 0.5])]
+    fig, ax = plt.subplots(2, 3, figsize=(4.8, 2.8))
+    for k, (nama, ar, ma) in enumerate(proses):
+        p = ArmaProcess(ar, ma)
+        _stem(ax[0, k], np.r_[np.nan, p.acf(9)[1:]])
+        _stem(ax[1, k], np.r_[np.nan, p.pacf(9)[1:]], warna=HIJAU)
+        ax[0, k].set_title(nama)
+        for a in ax[:, k]:
+            a.set_ylim(-0.75, 0.85)
+            a.set_xticks([1, 4, 8])
+        ax[1, k].set_xlabel("lag $h$")
+    ax[0, 0].set_ylabel(r"ACF $\rho(h)$")
+    ax[1, 0].set_ylabel(r"PACF $\alpha(h)$")
+    for a in ax.flat:
+        _rapikan(a)
+    fig.tight_layout()
+    simpan(fig, "bab05-pola")
+
+
+def bab05_mini():
+    from statsmodels.tsa.arima_process import ArmaProcess
+    from bab01_data import deret_mini
+    from bab05_pacf import pacf_sampel
+    a = pacf_sampel(deret_mini(), 5)
+    teori = ArmaProcess([1, -0.5, 0.5]).pacf(6)[1:]
+    h = np.arange(1, 6)
+    fig, ax = plt.subplots(figsize=(4.7, 1.9))
+    b = 1.96 / np.sqrt(8)
+    ax.axhspan(-b, b, color=BIRU_MUDA, lw=0)
+    ax.axhline(0, color=ABU, lw=0.6)
+    ax.vlines(h - 0.08, 0, teori, color=HIJAU, lw=1.0)
+    ax.scatter(h - 0.08, teori, color=HIJAU, s=8, zorder=3,
+               label=r"teoretis, $\phi = (\frac{1}{2}, -\frac{1}{2})$")
+    ax.vlines(h + 0.08, 0, a, color=MERAH, lw=1.0)
+    ax.scatter(h + 0.08, a, color=MERAH, marker="x", s=12, zorder=3,
+               label="sampel data mini")
+    ax.set_xticks(h)
+    ax.set_ylim(-0.8, 0.8)
+    ax.set_xlabel("lag $h$")
+    ax.set_ylabel(r"$\alpha(h)$")
+    ax.legend(fontsize=5.5, loc="upper right")
+    _rapikan(ax)
+    fig.tight_layout()
+    simpan(fig, "bab05-mini")
+
+
+def bab05_identifikasi():
+    from statsmodels.tsa.arima_process import ArmaProcess
+    from bab02_acf import acf_sampel
+    from bab05_pacf import pacf_sampel
+    # urutan pembangkitan sama dengan kode/bab05_simulasi.py
+    rng = np.random.default_rng(BENIH)
+    ar2 = ArmaProcess([1, -0.5, 0.5])
+    for _ in range(2000):
+        ar2.generate_sample(200, burnin=200, distrvs=rng.standard_normal)
+    T = 200
+    b = 1.96 / np.sqrt(T)
+    fig, ax = plt.subplots(2, 2, figsize=(4.7, 2.7))
+    for k, (nama, proses) in enumerate(
+            [("deret A", ArmaProcess([1, -0.6, 0.3])),
+             ("deret B", ArmaProcess([1], [1, 0.7]))]):
+        y = proses.generate_sample(T, burnin=200,
+                                   distrvs=rng.standard_normal)
+        for j, (v, wr, lab) in enumerate(
+                [(acf_sampel(y, 12)[1:], BIRU, "ACF"),
+                 (pacf_sampel(y, 12), HIJAU, "PACF")]):
+            a = ax[k, j]
+            a.axhspan(-b, b, color=BIRU_MUDA, lw=0)
+            _stem(a, np.r_[np.nan, v], warna=wr)
+            a.set_ylim(-0.5, 0.7)
+            a.set_title(f"{nama}: {lab}")
+            a.set_xticks([1, 4, 8, 12])
+    for a in ax[1]:
+        a.set_xlabel("lag $h$")
+    for a in ax.flat:
+        _rapikan(a)
+    fig.tight_layout()
+    simpan(fig, "bab05-identifikasi")
+
+
 # Fungsi gambar baru disisipkan DI ATAS penanda ini.
 
 

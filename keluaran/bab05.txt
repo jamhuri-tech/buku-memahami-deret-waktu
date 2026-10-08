@@ -1,0 +1,30 @@
+# Blok keluaran yang tercetak di Bab 5 (bab05-pacf.tex).
+# Diperiksa oleh periksa.py terhadap kode/bab05_*.py.
+
+=== blok 1 ===
+(3) PACF sampel AR(2) phi = (0.5, -0.5), 2000 deret, T = 200:
+    h          :      1       2       3       4       5
+    rata-rata  :  0.3274 -0.4946 -0.0078 -0.0082 -0.0031
+    simp. baku :  0.0386  0.0613  0.0697  0.0687  0.0704
+    1/sqrt(T) = 0.0707
+
+=== blok 2 ===
+(1) PACF sampel data mini, h = 1, 2, 3:
+    Durbin-Levinson     : [ 0.0833 -0.4266 -0.1004]
+    statsmodels 'ywm'   : [ 0.0833 -0.4266 -0.1004]
+    statsmodels 'ols'   : [ 0.0658 -0.5     0.0227]
+    v_h, h = 0..3: [1.5    1.4896 1.2185 1.2062]
+(2) ACF dan PACF teoretis, h = 1..5:
+    AR(2) (0.5, -0.5)
+      ACF : [ 0.3333 -0.3333 -0.3333  0.      0.1667]
+      PACF: [ 0.3333 -0.5     0.      0.      0.    ]
+    MA(1) theta = 0.5
+      ACF : [0.4 0.  0.  0.  0. ]
+      PACF: [ 0.4    -0.1905  0.0941 -0.0469  0.0234]
+
+=== blok 3 ===
+(4) dua deret simulasi, T = 200, batas = 0.1386:
+    deret A  r    :  0.555  0.124 -0.151 -0.243 -0.156
+             PACF :  0.555 -0.266 -0.140 -0.071  0.044
+    deret B  r    :  0.536  0.038 -0.046 -0.077 -0.042
+             PACF :  0.536 -0.350  0.183 -0.200  0.154
