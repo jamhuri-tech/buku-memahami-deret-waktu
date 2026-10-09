@@ -30,4 +30,10 @@ assert round(f, 4) == 0.2622
 s = np.sqrt(s2)
 assert round(s, 4) == 0.2835 and round(1.96 * 0.2835, 4) == 0.5557
 assert (round(f - 1.96 * s, 3), round(f + 1.96 * s, 3)) == (-0.294, 0.818)
+from bab15_studikasus import muat
+tahun, bulan, y = muat()
+latih = (tahun >= 2015) & (tahun <= 2023)
+rata = [round(y[latih & (bulan == b)].mean(), 3) for b in range(1, 13)]
+assert rata == [0.414, 0.043, 0.186, 0.226, 0.322, 0.422, 0.362, 0.013,
+                0.124, 0.069, 0.268, 0.571]
 print("Contoh Soal Bab 15: semua bilangan cocok")
