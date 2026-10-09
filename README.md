@@ -2,8 +2,8 @@
 
 Repositori pendamping buku **_Memahami Deret Waktu: ARIMA dan
 Peramalan, Periode demi Periode_** (Edisi Pertama, 2026) oleh Mohammad
-Jamhuri, seri *Memahami*. Naskah buku sedang ditulis; repositori ini
-diperbarui setiap kali satu bab selesai.
+Jamhuri, seri *Memahami*. Tag `edisi-1` menandai kode yang tepat
+dipakai untuk mencetak edisi pertama.
 
 Buku ini memakai satu **data mini** dari awal sampai akhir: penjualan
 mingguan delapan pekan, y = 2, 5, 6, 5, 3, 4, 4, 3, dengan rata-rata 4.
